@@ -18,7 +18,6 @@ import CartDrawer from "./cartdrawer";
 const navigation = [
   { name: "Home", href: "/pages/home" },
   { name: "Products", href: "/pages/productlist" },
-  { name: "Categories", href: "/categories" },
   { name: "Contact Us", href: "/pages/contact" },
   { name: "About", href: "/pages/about" },
 ];
