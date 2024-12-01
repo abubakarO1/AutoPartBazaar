@@ -105,52 +105,41 @@ const ProductDetailsPage = () => {
     <>
       <Navbar />
       <div className="max-w-7xl mx-auto px-6 py-12">
-  <div className="flex flex-col md:flex-row gap-10 bg-gray-900 shadow-lg rounded-lg p-6 overflow-hidden">
-    {/* Product Image Section */}
-    <div className="w-full md:w-1/2 mb-6 md:mb-0">
-      <div className="w-full h-full overflow-hidden">
-        <ProductImageSection
-          product={product}
-          currentImage={currentImage}
-          setCurrentImage={setCurrentImage}
-          swiperRef={swiperRef}
-          className="w-full h-full object-contain" // Adjusted for better containment
-        />
+        <div className="flex flex-col md:flex-row gap-10 bg-gray-900 shadow-xl rounded-lg p-8 overflow-hidden">
+          {/* Product Image Section */}
+          <div className="w-full md:w-1/2 mb-6 md:mb-0">
+            <ProductImageSection
+              product={product}
+              currentImage={currentImage}
+              setCurrentImage={setCurrentImage}
+              swiperRef={swiperRef}
+              className="w-full h-full object-contain" // Adjusted for better containment
+            />
+          </div>
+
+          {/* Product Details Section */}
+          <div className="flex-1 text-gray-100">
+            <h2 className="text-3xl font-bold text-white">{product.name}</h2>
+            <ProductDetailsSection product={product} stars={stars} />
+
+            {/* Rating Section */}
+            <div className="mt-8">
+              <ProductRatingSection
+                userRating={userRating}
+                handleRatingChange={handleRatingChange}
+                userReview={userReview}
+                handleReviewChange={handleReviewChange}
+                handleSubmitReview={handleSubmitReview}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Customer Products Section */}
+        <div className="mt-12">
+          <CustomerProductsSection products={products} />
+        </div>
       </div>
-    </div>
-
-    {/* Product Details Section */}
-    <div className="flex-1 text-gray-100">
-      <ProductDetailsSection product={product} stars={stars} />
-
-      {/* Price Section */}
-      <div className="flex items-center mt-6">
-        <span className="text-2xl font-semibold text-red-600">${product.price}</span>
-        {product.sale && (
-          <span className="ml-4 text-gray-500 line-through">${product.originalPrice}</span>
-        )}
-      </div>
-
-      {/* Rating Section */}
-      <div className="mt-8">
-        <ProductRatingSection
-          userRating={userRating}
-          handleRatingChange={handleRatingChange}
-          userReview={userReview}
-          handleReviewChange={handleReviewChange}
-          handleSubmitReview={handleSubmitReview}
-        />
-      </div>
-    </div>
-  </div>
-
-  {/* Customer Products Section */}
-  <div className="mt-12">
-    <CustomerProductsSection products={products} />
-  </div>
-</div>
-
-
       <Footer />
     </>
   );

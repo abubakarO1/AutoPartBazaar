@@ -45,7 +45,7 @@ const ProductImageSection = ({ product, currentImage, setCurrentImage, swiperRef
 
       {/* Image Thumbnails (Mini Preview) */}
       <div className="mt-4">
-        <div className="flex space-x-2 overflow-x-auto pb-4">
+        <div className="flex space-x-2 overflow-x-auto pb-4 scrollbar-hidden">
           {[product.image, ...product.additionalImages].map((image, index) => (
             <img
               key={index}
