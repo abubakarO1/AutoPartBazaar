@@ -1,14 +1,18 @@
 "use client";
-import Image from "next/image"; // Import the Image component
+import Image from "next/image";
 import { useState } from "react";
-import { useRouter } from "next/navigation"; // Import useRouter for page navigation
+import { useRouter, useSearchParams } from "next/navigation"; // For navigation and query parameters
 
 export default function NewPasswordPage() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState(""); // State to manage error messages
-  const [loading, setLoading] = useState(false); // State to manage loading
-  const router = useRouter(); // Next.js router for navigation
+  const [error, setError] = useState(""); // Manage error messages
+  const [success, setSuccess] = useState(""); // Manage success messages
+  const [loading, setLoading] = useState(false); // Manage loading state
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const email = searchParams.get("email"); // Retrieve email from query parameters
 
   // Handle change in new password field
   const handleNewPasswordChange = (e) => {
@@ -20,6 +24,7 @@ export default function NewPasswordPage() {
     setConfirmPassword(e.target.value);
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -29,21 +34,41 @@ export default function NewPasswordPage() {
       return;
     }
 
-    // You can add more password validation (length, complexity) if needed
+    // Password length validation
     if (newPassword.length < 8) {
-      setError("Password should be at least 8 characters.");
+      setError("Password should be at least 8 characters long.");
       return;
     }
 
-    setError(""); // Clear any previous error messages
-    setLoading(true); // Start loading when resetting the password
+    setError(""); // Clear previous errors
+    setLoading(true); // Start loading
 
-    // Simulate password reset process (replace with actual API call)
-    setTimeout(() => {
+    try {
+      // Send API request to reset the password
+      const response = await fetch("/api/updatePass", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email,newPassword, confirmPassword }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSuccess("Password reset successfully! Redirecting to login...");
+        setTimeout(() => {
+          router.push("/pages/login"); // Redirect to login page
+        }, 2000);
+      } else {
+        setError(data.error || "Failed to reset the password.");
+      }
+    } catch (error) {
+      console.error("Error resetting password:", error);
+      setError("An error occurred. Please try again.");
+    } finally {
       setLoading(false); // Stop loading
-      alert("Password successfully updated!"); // Show success message
-      router.push("/pages/login"); // Redirect to the login page after successful reset
-    }, 2000); // Simulate a delay of 2 seconds for password reset
+    }
   };
 
   return (
@@ -91,20 +116,21 @@ export default function NewPasswordPage() {
             {/* Error Message */}
             {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
+            {/* Success Message */}
+            {success && <p className="text-green-500 text-sm mt-2">{success}</p>}
+
             {/* Show loading spinner while resetting password */}
             {loading ? (
               <div className="w-full flex justify-center mt-4">
                 <div className="w-8 h-8 border-4 border-t-4 border-indigo-600 border-solid rounded-full animate-spin"></div>
               </div>
             ) : (
-              <>
-                <button
-                  type="submit"
-                  className="w-full mt-6 bg-indigo-600 rounded-full py-2 text-white font-medium hover:bg-indigo-700"
-                >
-                  Reset Password
-                </button>
-              </>
+              <button
+                type="submit"
+                className="w-full mt-6 bg-indigo-600 rounded-full py-2 text-white font-medium hover:bg-indigo-700"
+              >
+                Reset Password
+              </button>
             )}
           </form>
         </div>

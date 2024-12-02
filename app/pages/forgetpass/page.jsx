@@ -4,16 +4,17 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function forgetpass() {
-  const [otp, setOtp] = useState(new Array(4).fill(""));
-  const inputRefs = useRef([]);
+export default function ForgetPass() {
+  const [otp, setOtp] = useState(new Array(4).fill("")); // OTP state
+  const inputRefs = useRef([]); // References for inputs
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [resendMessage, setResendMessage] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
-  const email = searchParams.get("email"); // Retrieve the email from query params
+  const email = searchParams.get("email"); // Retrieve email from query params
 
+  // Handle OTP input change
   const handleChange = (e, index) => {
     const value = e.target.value;
     if (!isNaN(value) && value.length <= 1) {
@@ -21,12 +22,14 @@ export default function forgetpass() {
       newOtp[index] = value;
       setOtp(newOtp);
 
+      // Automatically move to the next input
       if (value && inputRefs.current[index + 1]) {
         inputRefs.current[index + 1].focus();
       }
     }
   };
 
+  // Handle backspace key for OTP input
   const handleKeyDown = (e, index) => {
     if (e.key === "Backspace") {
       if (otp[index] === "" && inputRefs.current[index - 1]) {
@@ -39,6 +42,7 @@ export default function forgetpass() {
     }
   };
 
+  // Handle form submission to verify OTP
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -47,8 +51,8 @@ export default function forgetpass() {
       return;
     }
 
-    setError(""); // Clear error
-    setLoading(true); // Start loading indicator
+    setError(""); // Clear previous error
+    setLoading(true); // Start loading
 
     try {
       const response = await fetch("/api/verifyOTP", {
@@ -63,7 +67,7 @@ export default function forgetpass() {
 
       if (response.ok) {
         setLoading(false); // Stop loading
-        router.push("/pages/login"); // Redirect to change password page
+        router.push(`/pages/changepass?email=${email}`); // Redirect to password change page with email
       } else {
         setLoading(false); // Stop loading
         setError(data.error || "Invalid OTP. Please try again.");
@@ -74,10 +78,11 @@ export default function forgetpass() {
     }
   };
 
+  // Handle resend OTP request
   const handleResend = async () => {
     setResendMessage(""); // Clear any previous messages
     setError(""); // Clear error
-    setOtp(new Array(4).fill("")); // Clear the OTP inputs
+    setOtp(new Array(4).fill("")); // Clear OTP inputs
 
     try {
       const response = await fetch("/api/resendOTP", {

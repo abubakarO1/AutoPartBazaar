@@ -23,13 +23,14 @@ export async function POST(req) {
       return NextResponse.json({ error: "Email not found." }, { status: 404 });
     }
 
-    const otp = crypto.randomInt(100000, 999999);
+    // Generate a 4-digit OTP
+    const otp = crypto.randomInt(1000, 9999); // Generates a 4-digit OTP
     const hashedOtp = await bcrypt.hash(otp.toString(), 10);
 
     const otps = mongoClient.db().collection("otps");
     await otps.updateOne(
       { email },
-      { $set: { otp: hashedOtp, expiry: Date.now() + 10 * 60 * 1000 } },
+      { $set: { otp: hashedOtp, expiry: Date.now() + 10 * 60 * 1000 } }, // Expires in 10 minutes
       { upsert: true }
     );
 
@@ -47,13 +48,13 @@ export async function POST(req) {
       from: process.env.EMAIL_USER,
       to: email,
       subject: "Your OTP Code",
-      text: `Your new OTP is: ${otp}`,
+      text: `Your OTP is: ${otp}`,
     });
 
     await mongoClient.close();
-    return NextResponse.json({ success: true, message: "OTP resent successfully." });
+    return NextResponse.json({ success: true, message: "OTP sent successfully." });
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ error: "An error occurred while resending the OTP." }, { status: 500 });
+    return NextResponse.json({ error: "An error occurred while processing the request." }, { status: 500 });
   }
 }
