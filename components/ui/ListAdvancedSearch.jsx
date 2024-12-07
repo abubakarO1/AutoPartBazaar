@@ -35,7 +35,7 @@ const AdvancedSearch = ({ filters, setFilters }) => {
           value={filters.keyword}
           onChange={handleChange}
           placeholder="e.g. lights, tyres, etc."
-          className="w-full border border-gray-400 bg-gray-800 text-gray-100 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+          className="w-full border border-gray-400 bg-gray-900 text-gray-100 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
         />
       </div>
 
@@ -74,7 +74,7 @@ const AdvancedSearch = ({ filters, setFilters }) => {
           name="category"
           value={filters.category}
           onChange={handleChange}
-          className="w-full border border-gray-400 bg-gray-800 text-gray-100 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+          className="w-full border border-gray-400 bg-gray-900 text-gray-100 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
         >
           <option value="">All</option>
           <option value="Engine">Engine</option>
@@ -94,7 +94,7 @@ const AdvancedSearch = ({ filters, setFilters }) => {
             value={filters.minPrice}
             onChange={handleChange}
             placeholder="Min"
-            className="w-1/2 border border-gray-400 bg-gray-800 text-gray-100 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+            className="w-1/2 border border-gray-400 bg-gray-900 text-gray-100 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
           />
           <input
             type="number"
@@ -102,7 +102,7 @@ const AdvancedSearch = ({ filters, setFilters }) => {
             value={filters.maxPrice}
             onChange={handleChange}
             placeholder="Max"
-            className="w-1/2 border border-gray-400 bg-gray-800 text-gray-100 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+            className="w-1/2 border border-gray-400 bg-gray-900 text-gray-100 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
           />
         </div>
       </div>
@@ -114,7 +114,7 @@ const AdvancedSearch = ({ filters, setFilters }) => {
           name="make"
           value={filters.make}
           onChange={handleChange}
-          className="w-full border border-gray-400 bg-gray-800 text-gray-100 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+          className="w-full border border-gray-400 bg-gray-900 text-gray-100 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
         >
           <option value="">All</option>
           <option value="Toyota">Toyota</option>
@@ -130,7 +130,7 @@ const AdvancedSearch = ({ filters, setFilters }) => {
           name="city"
           value={filters.city}
           onChange={handleChange}
-          className="w-full border border-gray-400 bg-gray-800 text-gray-100 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+          className="w-full border border-gray-400 bg-gray-900 text-gray-100 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
         >
           <option value="">All</option>
           <option value="Karachi">Karachi</option>

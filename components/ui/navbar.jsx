@@ -67,10 +67,11 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Cart and Profile Dropdown */}
+
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
             {/* Cart Button */}
             <div className="relative">
+            <Link href="/pages/cart">
               <button
                 type="button"
                 className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
@@ -78,8 +79,9 @@ export default function Navbar() {
                 <span className="sr-only">View cart</span>
                 <ShoppingCartIcon className="h-6 w-6" aria-hidden="true" />
               </button>
+              </Link>
               <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-xs text-white">
-                0
+                2
               </span>
             </div>
   <div className="flex space-x-4 ml-4">
@@ -133,9 +135,7 @@ export default function Navbar() {
         </div>
       </DisclosurePanel>
     </Disclosure>
-//      {/* Cart Drawer
-// {isCartOpen && <CartDrawer />}
-// </> */}
+    
   );
   
 }

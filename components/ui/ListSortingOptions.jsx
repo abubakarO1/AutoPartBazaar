@@ -13,7 +13,7 @@ const SortingOptions = ({ sortBy, setSortBy, setViewMode, viewMode }) => {
           id="sortBy"
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
-          className="border border-gray-400 bg-gray-800 text-gray-100 rounded px-3 py-1"
+          className="border border-gray-400 bg-gray-900 text-gray-100 rounded px-3 py-1"
         >
           <option value="priceLow">Price: Low to High</option>
           <option value="priceHigh">Price: High to Low</option>
@@ -21,13 +21,13 @@ const SortingOptions = ({ sortBy, setSortBy, setViewMode, viewMode }) => {
       </div>
       <div className="flex items-center space-x-4 text-white">
         <button
-          className={`p-2 ${viewMode === "list" ? "bg-red-600" : "bg-gray-800"} rounded`}
+          className={`p-2 ${viewMode === "list" ? "bg-red-600" : "bg-gray-900"} rounded`}
           onClick={() => setViewMode("list")}
         >
           LIST
         </button>
         <button
-          className={`p-2 ${viewMode === "grid" ? "bg-red-600" : "bg-gray-800"} rounded`}
+          className={`p-2 ${viewMode === "grid" ? "bg-red-600" : "bg-gray-900"} rounded`}
           onClick={() => setViewMode("grid")}
         >
           GRID

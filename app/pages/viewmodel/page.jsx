@@ -19,7 +19,7 @@ export default function ViewSavedModels() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-black text-gray-300">
+      <div className="min-h-screen bg-#2A2A2A text-gray-300">
         {/* Hero Section */}
         <div className="text-center py-10">
           <h1 className="text-4xl font-bold text-red-500">View Saved Models</h1>

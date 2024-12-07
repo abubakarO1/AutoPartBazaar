@@ -11,8 +11,8 @@ const initialProducts = [
   {
     id: 1,
     name: "Engine Oil 5W-30",
-    price: 25,
-    originalPrice: 30,
+    price: 2499,
+    originalPrice: 3500,
     category: "Engine",
     make: "Toyota",
     city: "Karachi",
@@ -21,14 +21,14 @@ const initialProducts = [
     image: "/images/car2.jpg",
     additionalImages: [
       "/images/car1.jpg",
-      "/images/bakar.jpg",
+      "/images/savedmodel.jpg",
       "/images/truck.png",
     ],
   },
   {
     id: 2,
     name: "Air Filter",
-    price: 12,
+    price: 1499,
     category: "Filters",
     make: "Honda",
     city: "Lahore",
@@ -39,8 +39,8 @@ const initialProducts = [
   {
     id: 3,
     name: "Brake Pads",
-    price: 40,
-    originalPrice: 50,
+    price: 999,
+    originalPrice: 1299,
     category: "Brakes",
     make: "Suzuki",
     city: "Islamabad",
@@ -51,13 +51,13 @@ const initialProducts = [
   {
     id: 4,
     name: "Car Battery",
-    price: 90,
+    price: 12000,
     category: "Electrical",
     make: "Toyota",
     city: "Karachi",
     sale: false,
     freeShipping: false,
-    image: "/images/haaris.jpg",
+    image: "/images/savedmodel.jpg",
   },
 ];
 
