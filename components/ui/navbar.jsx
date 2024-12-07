@@ -20,6 +20,7 @@ const navigation = [
   { name: "Products", href: "/pages/productlist" },
   { name: "Contact Us", href: "/pages/contact" },
   { name: "About", href: "/pages/about" },
+  { name: "View Gallery", href: "/pages/viewmodel" },
 ];
 
 function classNames(...classes) {
