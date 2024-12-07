@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Navbar from '@/components/ui/navbar';
 import Footer from '@/components/ui/footer';
+import Link from "next/link";
 
 const Home = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -66,9 +67,11 @@ const Home = () => {
                   confident shopping experience.
                 </p>
               </div>
+              <Link href="/pages/blog">
               <button className="bg-red-600 hover:bg-gray-800 text-white py-3 px-6 rounded-lg shadow-md transition-all duration-700">
                 Explore AutoPartBazaar
               </button>
+              </Link>
             </div>
             <div className="relative">
               <img

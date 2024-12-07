@@ -9,7 +9,7 @@ function Footer() {
           <a href="/pages/about" className="hover:bg-red-500">
             About
           </a>
-          <a href="#" className="hover:bg-red-500">
+          <a href="/pages/blog" className="hover:bg-red-500">
             Blog
           </a>
           <a href="/pages/productlist" className="hover:bg-red-500">
@@ -29,7 +29,7 @@ function Footer() {
           <a href="#" className="hover:text-gray-300">
             <FaInstagram className="h-6 w-6" />
           </a>
-          <a href="#" className="hover:text-gray-300">
+          <a href="https://github.com/abubakarO1/AutoPartBazaar" className="hover:text-gray-300">
             <FaGithub className="h-6 w-6" />
           </a>
           <a href="#" className="hover:text-gray-300">
