@@ -1,67 +1,15 @@
+
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from '@/components/ui/navbar';
 import Footer from '@/components/ui/footer';
 import AdvancedSearch from '@/components/ui/ListAdvancedSearch';
 import ProductGrid from '@/components/ui/ListProductGrid';
 import SortingOptions from '@/components/ui/ListSortingOptions';
 
-const initialProducts = [
-  {
-    id: 1,
-    name: "Engine Oil 5W-30",
-    price: 25,
-    originalPrice: 30,
-    category: "Engine",
-    make: "Toyota",
-    city: "Karachi",
-    sale: true,
-    freeShipping: false,
-    image: "/images/car2.jpg",
-    additionalImages: [
-      "/images/car1.jpg",
-      "/images/bakar.jpg",
-      "/images/truck.png",
-    ],
-  },
-  {
-    id: 2,
-    name: "Air Filter",
-    price: 12,
-    category: "Filters",
-    make: "Honda",
-    city: "Lahore",
-    sale: false,
-    freeShipping: true,
-    image: "/images/truck.png",
-  },
-  {
-    id: 3,
-    name: "Brake Pads",
-    price: 40,
-    originalPrice: 50,
-    category: "Brakes",
-    make: "Suzuki",
-    city: "Islamabad",
-    sale: true,
-    freeShipping: true,
-    image: "/images/car1.jpg",
-  },
-  {
-    id: 4,
-    name: "Car Battery",
-    price: 90,
-    category: "Electrical",
-    make: "Toyota",
-    city: "Karachi",
-    sale: false,
-    freeShipping: false,
-    image: "/images/haaris.jpg",
-  },
-];
-
 const Home = () => {
+  const [products, setProducts] = useState([]);  // Store fetched products
   const [filters, setFilters] = useState({
     keyword: "",
     sale: false,
@@ -74,8 +22,31 @@ const Home = () => {
   });
   const [sortBy, setSortBy] = useState("priceLow");
   const [viewMode, setViewMode] = useState("grid");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const filteredProducts = initialProducts.filter((product) => {
+  // Fetch products from the backend on component mount
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('/api/products');
+        if (!response.ok) {
+          throw new Error('Failed to fetch products');
+        }
+        const data = await response.json();
+        console.log("Fetched Products:", data.products);  // Log fetched products to verify image URL
+        setProducts(data.products);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  const filteredProducts = products.filter((product) => {
     return (
       (!filters.keyword || product.name.toLowerCase().includes(filters.keyword.toLowerCase())) &&
       (!filters.sale || product.sale) &&
@@ -97,6 +68,22 @@ const Home = () => {
     }
     return 0;
   });
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen text-red-500">
+        <p>{error}</p>
+      </div>
+    );
+  }
 
   return (
     <>

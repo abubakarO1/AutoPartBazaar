@@ -13,7 +13,11 @@ const ProductGrid = ({ products, viewMode }) => {
       }`}
     >
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} viewMode={viewMode} />
+        <ProductCard
+          key={product.productId} // Corrected key to `productId`
+          product={product} // Passing entire product object
+          viewMode={viewMode}
+        />
       ))}
     </div>
   );

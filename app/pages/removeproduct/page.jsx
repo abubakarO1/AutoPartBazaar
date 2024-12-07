@@ -3,63 +3,71 @@
 import React, { useState } from "react";
 
 const RemoveProductPage = () => {
-  const [productId, setProductId] = useState("");
-  const [product, setProduct] = useState(null); // Store fetched product data
+  const [productId, setProductId] = useState(""); // Store Product ID
+  const [product, setProduct] = useState(null); // Store Product data
   const [loading, setLoading] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false); // State to show/hide confirmation modal
-  const [customAlert, setCustomAlert] = useState(null); // State for custom alert
+  const [showConfirm, setShowConfirm] = useState(false); // Show confirmation modal
+  const [customAlert, setCustomAlert] = useState(null); // Store custom alert
 
-  // Dummy product data
-  const dummyProducts = {
-    "101": {
-      name: "Engine Oil Filter",
-      price: 25,
-      category: "Filters",
-      make: "Toyota",
-      city: "Karachi",
-    },
-    "102": {
-      name: "Brake Pad",
-      price: 50,
-      category: "Brakes",
-      make: "Honda",
-      city: "Lahore",
-    },
-    "103": {
-      name: "Car Battery",
-      price: 100,
-      category: "Electrical",
-      make: "Hyundai",
-      city: "Islamabad",
-    },
-  };
+  // Fetch product details based on the productId
+  const handleFetchProduct = async () => {
+    if (!productId) {
+      showCustomAlert("Please enter a Product ID.", "error");
+      return;
+    }
 
-  const handleFetchProduct = () => {
     setLoading(true);
-    setTimeout(() => {
-      if (dummyProducts[productId]) {
-        setProduct(dummyProducts[productId]); // Populate with dummy data
+    try {
+      const res = await fetch(`/api/products/${productId}`);  // Ensure correct URL format
+      const data = await res.json();
+
+      if (data.product) {
+        setProduct(data.product);  // Set product data
       } else {
         showCustomAlert("Product not found. Please check the Product ID.", "error");
         setProduct(null);
       }
+    } catch (error) {
+      showCustomAlert("Error fetching product. Please try again.", "error");
+    } finally {
       setLoading(false);
-    }, 1000); // Simulating network delay
+    }
   };
 
-  const handleRemoveProduct = () => {
-    // Simulate a database delete action
+  // Handle product removal
+  const handleRemoveProduct = async () => {
     setShowConfirm(false); // Close modal
-    setTimeout(() => {
-      showCustomAlert("Product removed successfully! (This is a dummy delete)", "success");
-      setProduct(null); // Clear product details
-      setProductId(""); // Reset Product ID input
-    }, 1000);
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/removeproduct", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ productId }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        showCustomAlert("Product removed successfully!", "success");
+        setProduct(null); // Clear product details from state
+        setProductId(""); // Reset Product ID input
+      } else {
+        showCustomAlert(data.error || "Failed to remove product.", "error");
+      }
+    } catch (error) {
+      showCustomAlert("Error deleting product. Please try again.", "error");
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // Display custom alert message
   const showCustomAlert = (message, type) => {
     setCustomAlert({ message, type });
-    setTimeout(() => setCustomAlert(null), 3000); // Automatically hide after 3 seconds
+    setTimeout(() => setCustomAlert(null), 3000); // Automatically hide alert after 3 seconds
   };
 
   return (
@@ -86,9 +94,7 @@ const RemoveProductPage = () => {
       )}
 
       {/* Remove Product Form */}
-      <form
-        className="space-y-6 text-white w-full max-w-md bg-opacity-70 bg-black p-6 rounded shadow-lg"
-      >
+      <form className="space-y-6 text-white w-full max-w-md bg-opacity-70 bg-black p-6 rounded shadow-lg">
         <h1 className="text-3xl font-bold text-gradient mb-6">Remove Product</h1>
 
         {/* Fetch Product by ID */}
@@ -109,7 +115,7 @@ const RemoveProductPage = () => {
             type="button"
             onClick={handleFetchProduct}
             className="mt-4 w-full p-2 bg-red-500 text-white font-semibold rounded hover:bg-red-600 transition-all"
-            disabled={loading}
+            disabled={loading || !productId}
           >
             {loading ? "Fetching..." : "Fetch Product"}
           </button>
