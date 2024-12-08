@@ -28,7 +28,7 @@ export default function ShoppingCart() {
     name: "",
     phone: "",
     email: "",
-    location: "",
+    city: "",
     address: "",
     postalCode: "",
   });
@@ -37,7 +37,7 @@ export default function ShoppingCart() {
     name: "",
     phone: "",
     email: "",
-    location: "",
+    city: "",
     address: "",
     postalCode: "",
   });
@@ -65,15 +65,18 @@ export default function ShoppingCart() {
   };
 
   const validateForm = () => {
-    let errors = {};
-    const { name, phone, email, location, address, postalCode } = formData;
+    const errors = {};
+    const { name, phone, email, city, address, postalCode } = formData;
 
-    if (!name) errors.name = "Name is required.";
-    if (!phone || !/^\d{10}$/.test(phone)) errors.phone = "Valid phone number is required.";
-    if (!email || !/\S+@\S+\.\S+/.test(email)) errors.email = "Valid email is required.";
-    if (!location) errors.location = "Location is required.";
-    if (!address) errors.address = "Address is required.";
-    if (!postalCode || !/^\d{5}$/.test(postalCode)) errors.postalCode = "Valid postal code is required.";
+    if (!name.trim()) errors.name = "Name is required.";
+    if (!phone.trim() || !/^\d{10}$/.test(phone))
+      errors.phone = "Enter a valid 10-digit phone number.";
+    if (!email.trim() || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))
+      errors.email = "Enter a valid email address.";
+    if (!city.trim()) errors.city = "City is required.";
+    if (!address.trim()) errors.address = "Address is required.";
+    if (!postalCode.trim() || !/^\d{5}$/.test(postalCode))
+      errors.postalCode = "Enter a valid 5-digit postal code.";
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -98,7 +101,9 @@ export default function ShoppingCart() {
             <div className="w-full lg:w-7/12">
               <hr className="my-4 border-gray-600" />
               <div className="mb-6">
-                <h2 className="text-2xl font-semibold text-white">Shopping Cart</h2>
+                <h2 className="text-2xl font-semibold text-white">
+                  Shopping Cart
+                </h2>
                 <p className="text-sm text-gray-400">
                   You have {cartItems.length} items in your cart.
                 </p>
@@ -115,8 +120,12 @@ export default function ShoppingCart() {
                       className="w-16 h-16 rounded-lg"
                     />
                     <div className="ml-4">
-                      <h5 className="text-lg font-semibold text-white">{item.name}</h5>
-                      <p className="text-sm text-gray-400">{item.description}</p>
+                      <h5 className="text-lg font-semibold text-white">
+                        {item.name}
+                      </h5>
+                      <p className="text-sm text-gray-400">
+                        {item.description}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center">
@@ -126,7 +135,10 @@ export default function ShoppingCart() {
                       value={item.quantity}
                       className="w-12 border border-gray-600 rounded-lg text-center mr-4 bg-gray-700 text-white"
                       onChange={(e) =>
-                        handleQuantityChange(item.id, parseInt(e.target.value, 10) || 1)
+                        handleQuantityChange(
+                          item.id,
+                          parseInt(e.target.value, 10) || 1
+                        )
                       }
                     />
                     <p className="text-lg font-semibold text-white mr-4">
@@ -136,7 +148,7 @@ export default function ShoppingCart() {
                       className="text-gray-400 hover:text-red-600"
                       onClick={() => handleRemoveItem(item.id)}
                     >
-                      🗑️ {/* Trash bin emoji for remove button */}
+                      🗑️
                     </button>
                   </div>
                 </div>
@@ -175,12 +187,14 @@ export default function ShoppingCart() {
                     Rs{" "}
                     {cartItems.reduce(
                       (total, item) => total + item.price * item.quantity,
-                      20
+                      250
                     )}
                   </p>
                 </div>
                 <div className="mt-6">
-                  <h5 className="text-md font-semibold mb-2">Delivery Information</h5>
+                  <h5 className="text-md font-semibold mb-2">
+                    Delivery Information
+                  </h5>
                   <form className="space-y-4" onSubmit={handleSubmit}>
                     <input
                       type="text"
@@ -220,14 +234,14 @@ export default function ShoppingCart() {
 
                     <input
                       type="text"
-                      name="location"
-                      value={formData.location}
+                      name="city"
+                      value={formData.city}
                       onChange={handleFormChange}
-                      placeholder="Location"
+                      placeholder="City"
                       className="w-full p-2 border border-gray-600 rounded-lg bg-gray-700 text-white placeholder-gray-400"
                     />
-                    {formErrors.location && (
-                      <p className="text-sm text-red-600">{formErrors.location}</p>
+                    {formErrors.city && (
+                      <p className="text-sm text-red-600">{formErrors.city}</p>
                     )}
 
                     <input
@@ -251,13 +265,19 @@ export default function ShoppingCart() {
                       className="w-full p-2 border border-gray-600 rounded-lg bg-gray-700 text-white placeholder-gray-400"
                     />
                     {formErrors.postalCode && (
-                      <p className="text-sm text-red-600">{formErrors.postalCode}</p>
+                      <p className="text-sm text-red-600">
+                        {formErrors.postalCode}
+                      </p>
                     )}
+
+                    <button
+                      type="submit"
+                      className="w-full mt-6 bg-red-600 text-white p-3 rounded-lg hover:bg-red-700"
+                    >
+                      Cash on Delivery Checkout
+                    </button>
                   </form>
                 </div>
-                <button className="w-full mt-6 bg-red-600 text-white p-3 rounded-lg hover:bg-red-700">
-                  Cash on Delivery Checkout
-                </button>
               </div>
             </div>
           </div>
