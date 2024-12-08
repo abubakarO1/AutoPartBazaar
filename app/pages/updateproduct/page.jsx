@@ -3,59 +3,29 @@
 import React, { useState } from "react";
 
 const UpdateProductPage = () => {
-  const [productId, setProductId] = useState("");
+  const [productId, setProductId] = useState(""); // To fetch product by ID
   const [product, setProduct] = useState(null); // Store fetched product data
   const [loading, setLoading] = useState(false);
   const [customAlert, setCustomAlert] = useState(null); // State for custom alert
 
-  // Dummy product data
-  const dummyProducts = {
-    "101": {
-      name: "Engine Oil Filter",
-      price: 25,
-      originalPrice: 30,
-      category: "Filters",
-      make: "Toyota",
-      city: "Karachi",
-      sale: true,
-      freeShipping: false,
-      image: "/images/sample-product.jpg",
-    },
-    "102": {
-      name: "Brake Pad",
-      price: 50,
-      originalPrice: 60,
-      category: "Brakes",
-      make: "Honda",
-      city: "Lahore",
-      sale: false,
-      freeShipping: true,
-      image: "/images/sample-product.jpg",
-    },
-    "103": {
-      name: "Car Battery",
-      price: 100,
-      originalPrice: 120,
-      category: "Electrical",
-      make: "Hyundai",
-      city: "Islamabad",
-      sale: true,
-      freeShipping: true,
-      image: "/images/sample-product.jpg",
-    },
-  };
-
-  const handleFetchProduct = () => {
+  // Fetch product by productId
+  const handleFetchProduct = async () => {
     setLoading(true);
-    setTimeout(() => {
-      if (dummyProducts[productId]) {
-        setProduct(dummyProducts[productId]); // Populate with dummy data
+    try {
+      const res = await fetch(`/api/products/${productId}`);
+      const data = await res.json();
+
+      if (data.product) {
+        setProduct(data.product); // Set product data for update
       } else {
         showCustomAlert("Product not found. Please check the Product ID.", "error");
         setProduct(null);
       }
+    } catch (error) {
+      showCustomAlert("Error fetching product. Please try again.", "error");
+    } finally {
       setLoading(false);
-    }, 1000); // Simulating network delay
+    }
   };
 
   const handleChange = (e) => {
@@ -66,14 +36,36 @@ const UpdateProductPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!product) {
       showCustomAlert("No product data to update. Please fetch the product first.", "error");
       return;
     }
-    showCustomAlert("Product updated successfully! (This is a dummy update)", "success");
-    console.log("Updated product data:", product);
+
+    setLoading(true);
+    try {
+      const updatedProduct = { ...product, productId };
+
+      const res = await fetch("/api/updateproduct", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedProduct),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        showCustomAlert(data.message, "success");
+      } else {
+        showCustomAlert(data.error || "Failed to update product.", "error");
+      }
+    } catch (error) {
+      showCustomAlert("Error updating product. Please try again.", "error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const showCustomAlert = (message, type) => {
@@ -108,15 +100,11 @@ const UpdateProductPage = () => {
         onSubmit={handleSubmit}
         className="space-y-6 text-white w-full max-w-md bg-opacity-70 bg-black p-6 rounded shadow-lg"
       >
-        <h1 className="text-3xl font-bold text-gradient mb-6">
-          Update Product
-        </h1>
+        <h1 className="text-3xl font-bold text-gradient mb-6">Update Product</h1>
 
         {/* Fetch Product by ID */}
         <div>
-          <label className="block mb-2 text-lg font-medium text-gradient">
-            Product ID
-          </label>
+          <label className="block mb-2 text-lg font-medium text-gradient">Product ID</label>
           <input
             type="text"
             name="productId"
@@ -140,9 +128,7 @@ const UpdateProductPage = () => {
         {product && (
           <>
             <div>
-              <label className="block mb-2 text-lg font-medium text-gradient">
-                Product Name
-              </label>
+              <label className="block mb-2 text-lg font-medium text-gradient">Product Name</label>
               <input
                 type="text"
                 name="name"
@@ -154,9 +140,7 @@ const UpdateProductPage = () => {
               />
             </div>
             <div>
-              <label className="block mb-2 text-lg font-medium text-gradient">
-                Price
-              </label>
+              <label className="block mb-2 text-lg font-medium text-gradient">Price</label>
               <input
                 type="number"
                 name="price"
@@ -168,9 +152,7 @@ const UpdateProductPage = () => {
               />
             </div>
             <div>
-              <label className="block mb-2 text-lg font-medium text-gradient">
-                Original Price
-              </label>
+              <label className="block mb-2 text-lg font-medium text-gradient">Original Price</label>
               <input
                 type="number"
                 name="originalPrice"
@@ -181,9 +163,7 @@ const UpdateProductPage = () => {
               />
             </div>
             <div>
-              <label className="block mb-2 text-lg font-medium text-gradient">
-                Category
-              </label>
+              <label className="block mb-2 text-lg font-medium text-gradient">Category</label>
               <select
                 name="category"
                 value={product.category}
@@ -191,27 +171,15 @@ const UpdateProductPage = () => {
                 className="w-full p-2 bg-transparent border border-gray-500 rounded text-gray-200 focus:outline-none focus:ring-2 focus:ring-red-500"
                 required
               >
-                <option value="" className="text-black">
-                  Select Category
-                </option>
-                <option value="Engine" className="text-black">
-                  Engine
-                </option>
-                <option value="Filters" className="text-black">
-                  Filters
-                </option>
-                <option value="Brakes" className="text-black">
-                  Brakes
-                </option>
-                <option value="Electrical" className="text-black">
-                  Electrical
-                </option>
+                <option value="" className="text-black">Select Category</option>
+                <option value="Engine" className="text-black">Engine</option>
+                <option value="Filters" className="text-black">Filters</option>
+                <option value="Brakes" className="text-black">Brakes</option>
+                <option value="Electrical" className="text-black">Electrical</option>
               </select>
             </div>
             <div>
-              <label className="block mb-2 text-lg font-medium text-gradient">
-                Make
-              </label>
+              <label className="block mb-2 text-lg font-medium text-gradient">Make</label>
               <input
                 type="text"
                 name="make"
@@ -222,9 +190,7 @@ const UpdateProductPage = () => {
               />
             </div>
             <div>
-              <label className="block mb-2 text-lg font-medium text-gradient">
-                City
-              </label>
+              <label className="block mb-2 text-lg font-medium text-gradient">City</label>
               <input
                 type="text"
                 name="city"
@@ -258,24 +224,13 @@ const UpdateProductPage = () => {
                 Free Shipping
               </label>
             </div>
-            <div>
-              <label className="block mb-2 text-lg font-medium text-gradient">
-                Image URL
-              </label>
-              <input
-                type="text"
-                name="image"
-                value={product.image}
-                onChange={handleChange}
-                className="w-full p-2 bg-transparent border border-gray-500 rounded text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
-                placeholder="Enter image URL"
-              />
-            </div>
+
             <button
               type="submit"
-              className="w-full p-2 bg-red-500 text-white font-semibold rounded hover:bg-green-500 transition-all"
+              className="w-full p-2 mt-6 bg-red-500 text-white font-semibold rounded hover:bg-red-600 transition-all"
+              disabled={loading}
             >
-              Update Product
+              {loading ? "Updating..." : "Update Product"}
             </button>
           </>
         )}
