@@ -19,17 +19,6 @@ export async function POST(req) {
       );
     }
 
-    // Password regex validation
-    // const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
-    // if (!passwordRegex.test(newPassword)) {
-    //   return new Response(
-    //     JSON.stringify({
-    //       error: "Password must be at least 8 characters long, include a letter and a number.",
-    //     }),
-    //     { status: 400 }
-    //   );
-    // }
-
     // Create MongoDB connection
     const mongoClient = new MongoClient(process.env.MONGODB_URI);
     await mongoClient.connect();

@@ -1,51 +1,3 @@
-// import dbConnect from '@/utils/db';
-// import Product from '@/app/models/product';
-// import { NextResponse } from 'next/server';
-
-// // POST method handler
-// export const POST = async (req) => {
-//   try {
-//     // Connect to the database
-//     await dbConnect();
-
-//     // Extract product data from the request body
-//     const { productId, name, price, originalPrice, category, make, city, sale, freeShipping, image } = await req.json();
-
-//     // Check if a product with the same productId already exists
-//     const existingProduct = await Product.findOne({ productId });
-//     if (existingProduct) {
-//       return NextResponse.json({ error: "Product with this ID already exists" }, { status: 400 });
-//     }
-
-//     // Validate the required fields
-//     if (!productId || !name || !price || !category) {
-//       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-//     }
-
-//     // Create a new product document
-//     const newProduct = new Product({
-//       productId,
-//       name,
-//       price,
-//       originalPrice,
-//       category,
-//       make,
-//       city,
-//       sale,
-//       freeShipping,
-//       image,
-//     });
-
-//     // Save the product to the database
-//     await newProduct.save();
-
-//     // Respond with success
-//     return NextResponse.json({ message: "Product added successfully", product: newProduct }, { status: 201 });
-//   } catch (error) {
-//     console.error("Error adding product:", error);
-//     return NextResponse.json({ error: "Failed to add product" }, { status: 500 });
-//   }
-// };
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'; // Import S3 SDK
 import multer from 'multer';
 import Product from '@/app/models/product';  // Product model import
@@ -92,6 +44,12 @@ export async function POST(req) {
       return new Response(JSON.stringify({ error: 'Please fill in all required fields.' }), { status: 400 });
     }
 
+    // Check if a product with the same productId already exists in the database
+    const existingProduct = await Product.findOne({ productId });
+    if (existingProduct) {
+      return new Response(JSON.stringify({ error: 'A product with this ID already exists.' }), { status: 400 });
+    }
+
     // Check if image file is provided and log its size and type for debugging
     let imageUrl = '';
     if (imageFile) {
@@ -106,7 +64,6 @@ export async function POST(req) {
         Key: `${Date.now()}_${imageFile.name}`,  // Unique key for the file
         Body: buffer,  // Pass the Buffer here
         ContentType: imageFile.type,  // Content-Type of the file
-
       };
 
       try {
@@ -155,8 +112,6 @@ export async function POST(req) {
     return new Response(JSON.stringify({ error: 'An error occurred while adding the product.' }), { status: 500 });
   }
 }
-
-
 
 
 

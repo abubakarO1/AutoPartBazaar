@@ -10,7 +10,7 @@ export const GET = async (req, { params }) => {
 
     // Extract productId from dynamic params
     const { productId } = params;  // Use productId, not productID
-    console.log("Fetching product with ID:", productId);  // For debugging
+    console.log("Fetching product with ID:", productId); 
 
     // Query the product by productId in the database
     const product = await Product.findOne({ productId });

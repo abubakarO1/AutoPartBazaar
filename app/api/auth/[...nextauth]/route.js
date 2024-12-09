@@ -1,78 +1,60 @@
-// import NextAuth from 'next-auth';
-// import CredentialsProvider from 'next-auth/providers/credentials';
 // import dbConnect from '@/utils/db';
 // import User from '@/app/models/User';
-// import bcrypt from 'bcryptjs';
+// import NextAuth from "next-auth/next";
+// import CredentialsProvider from "next-auth/providers/credentials";
+// import bcrypt from "bcryptjs";
 
-// export default NextAuth({
-    
-//   session: {
-//     strategy: 'jwt', // Use JSON Web Tokens for session management
-//   },
+// export const authOptions = {
 //   providers: [
 //     CredentialsProvider({
-//       name: 'Credentials',
-//       credentials: {
-//         email: { label: 'Email', type: 'text' },
-//         password: { label: 'Password', type: 'password' },
-//       },
+//       name: "credentials",
+//       credentials: {},
+
 //       async authorize(credentials) {
 //         const { email, password } = credentials;
 
-//         // Connect to the database
-//         await dbConnect();
+//         try {
+//           await dbConnect();
+//           const user = await User.findOne({ email });
 
-//         // Check if the user exists
-//         const user = await User.findOne({ email });
-//         if (!user) {
-//           console.error('Login error: User not found');
-//           throw new Error('User not found');
+//           if (!user) {
+//             return null;
+//           }
+
+//           const passwordsMatch = await bcrypt.compare(password, user.password);
+
+//           if (!passwordsMatch) {
+//             return null;
+//           }
+
+//           return user;
+//         } catch (error) {
+//           console.log("Error: ", error);
+//           return null;
 //         }
-
-//         // Compare the provided password with the stored hashed password
-//         const isValidPassword = await bcrypt.compare(password, user.password);
-//         if (!isValidPassword) {
-//           console.error('Login error: Invalid credentials');
-//           throw new Error('Invalid credentials');
-//         }
-
-//         // Return the user object on successful authentication
-//         return { id: user._id, email: user.email, phone: user.phone, name: user.name };
 //       },
-//     }
-// ),
+//     }),
 //   ],
+//   session: {
+//     strategy: "jwt",
+//   },
+//   secret: process.env.NEXTAUTH_SECRET,
 //   pages: {
-//     signIn: '/auth/signin', // Custom sign-in page
-//     error: '/auth/error',   // Error redirect page
+//     signIn: "/pages/home",
+//     error: '/pages/error', // You can customize this error page for the specific email error
 //   },
-//   callbacks: {
-//     async jwt({ token, user }) {
-//       if (user) {
-//         token.id = user.id;
-//         token.email = user.email;
-//         token.phone = user.phone;
-//         token.name = user.name;
-//       }
-//       return token;
-//     },
-//     async session({ session, token }) {
-//       session.user.id = token.id;
-//       session.user.email = token.email;
-//       session.user.phone = token.phone;
-//       session.user.name = token.name;  // Ensure user.name is also set
-//       return session;
-//     },
-//   },
-  
-//   secret: process.env.NEXTAUTH_SECRET, // Ensure this is set in your .env file
-// });
+// };
 
+// const handler = NextAuth(authOptions);
+
+// export { handler as GET, handler as POST };
 import dbConnect from '@/utils/db';
 import User from '@/app/models/User';
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
+
+const ADMIN_EMAIL = "AutoPartBazaar21@gmail.com"; // Replace with your specific admin email
 
 export const authOptions = {
   providers: [
@@ -87,19 +69,29 @@ export const authOptions = {
           await dbConnect();
           const user = await User.findOne({ email });
 
+          // If user doesn't exist, return null
           if (!user) {
             return null;
           }
 
+          // Check if password matches
           const passwordsMatch = await bcrypt.compare(password, user.password);
-
           if (!passwordsMatch) {
             return null;
           }
 
-          return user;
+          // Assign role based on email
+          const role = email === ADMIN_EMAIL ? "admin" : "user";
+
+          // Return user with role
+          return {
+            id: user._id,
+            email: user.email,
+            role: role, // Set role as admin for the specific email, else user
+          };
         } catch (error) {
           console.log("Error: ", error);
+          return null;
         }
       },
     }),
@@ -109,7 +101,24 @@ export const authOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
-    signIn: "/pages/home",
+    signIn: "/pages/home", // SignIn page
+    error: '/pages/error',  // Customize error page if needed
+  },
+  callbacks: {
+    // Store role in the JWT token
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = user.role; // Add role to the JWT token
+      }
+      return token;
+    },
+    // Include role in the session object
+    async session({ session, token }) {
+      if (token) {
+        session.user.role = token.role; // Add role to session
+      }
+      return session;
+    },
   },
 };
 

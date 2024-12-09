@@ -77,9 +77,8 @@ const AdvancedSearch = ({ filters, setFilters }) => {
           className="w-full border border-gray-400 bg-gray-900 text-gray-100 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
         >
           <option value="">All</option>
-          <option value="Engine">Engine</option>
-          <option value="Filters">Filters</option>
-          <option value="Brakes">Brakes</option>
+          <option value="Tyres">Tyres</option>
+          <option value="Bumpers">Bumpers</option>
           <option value="Electrical">Electrical</option>
         </select>
       </div>

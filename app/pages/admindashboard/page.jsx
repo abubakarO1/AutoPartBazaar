@@ -127,28 +127,12 @@ export default function AdminDashboard() {
                             className="flex items-center text-gray-300 focus:outline-none"
                         >
                             <img
-                                src="/user-placeholder.png"
+                                src="/images/admin.jpeg"
                                 alt="Profile"
                                 className="w-8 h-8 rounded-full"
                             />
-                            <span className="ml-2 text-sm">John Doe</span>
-                            <i className="fas fa-chevron-down ml-2"></i>
+                            <span className="ml-2 text-sm">Admin</span>
                         </button>
-
-                        {/* Dropdown Menu */}
-                        {profileDropdownOpen && (
-                            <div className="absolute right-0 mt-2 w-48 bg-gray-800 text-white rounded shadow-lg z-10">
-                                <a href="#" className="block px-4 py-2 hover:bg-gray-700">
-                                    Profile
-                                </a>
-                                <a href="#" className="block px-4 py-2 hover:bg-gray-700">
-                                    Settings
-                                </a>
-                                <a href="#" className="block px-4 py-2 hover:bg-gray-700">
-                                    Logout
-                                </a>
-                            </div>
-                        )}
                     </div>
                 </header>
 

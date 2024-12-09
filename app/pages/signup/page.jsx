@@ -1,10 +1,10 @@
 'use client';
 import { useRouter } from 'next/router';
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai'; // Eye icons
 import Image from 'next/image';
 
 export default function Home() {
@@ -18,6 +18,8 @@ export default function Home() {
 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [showPassword, setShowPassword] = useState(false); // Toggle for password visibility
+  const [showRePassword, setShowRePassword] = useState(false); // Toggle for repassword visibility
 
   // Handle input changes
   const handleChange = (e) => {
@@ -38,17 +40,32 @@ export default function Home() {
       return;
     }
 
+    // **Step 1**: Check if passwords match
     if (password !== repassword) {
       setError('Passwords do not match.');
       return;
     }
 
-    try {
+    // **Step 2**: Password strength validation (only if passwords match)
+    const passwordStrengthRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
+    if (!passwordStrengthRegex.test(password)) {
+      setError('Password must contain at least one uppercase letter, one number, and one special character.');
+      return;
+    }
 
-      const resUserExists = await fetch("/api/userExists", {
-        method: "POST",
+    // **Step 3**: Phone number validation (exactly 11 digits, no country code)
+    const phoneValidationRegex = /^\d{11}$/;
+    if (!phoneValidationRegex.test(phone)) {
+      setError('Phone number must be exactly 11 digits.');
+      return;
+    }
+
+    try {
+      // Check if user already exists
+      const resUserExists = await fetch('/api/userExists', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email }),
       });
@@ -56,10 +73,11 @@ export default function Home() {
       const { user } = await resUserExists.json();
 
       if (user) {
-        setError("User already exists.");
+        setError('User already exists.');
         return;
       }
 
+      // Submit the signup data
       const response = await fetch('/api/signup', {
         method: 'POST',
         headers: {
@@ -80,61 +98,9 @@ export default function Home() {
     }
   };
 
-// export default function RegisterForm() {
-//   const [name, setName] = useState("");
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
-//   const [error, setError] = useState("");
-
-//   const router = useRouter();
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-
-//     if (!name || !email || !password) {
-//       setError("All fields are necessary.");
-//       return;
-//     }
-
-//     try {
-//       const resUserExists = await fetch("api/userExists", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({ email }),
-//       });
-
-//       const { user } = await resUserExists.json();
-
-//       if (user) {
-//         setError("User already exists.");
-//         return;
-//       }
-
-//       const res = await fetch("api/register", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({
-//           name,
-//           email,
-//           password,
-//         }),
-//       });
-
-//       if (res.ok) {
-//         const form = e.target;
-//         form.reset();
-//         router.push("/");
-//       } else {
-//         console.log("User registration failed.");
-//       }
-//     } catch (error) {
-//       console.log("Error during registration: ", error);
-//     }
-//   };
+  // Toggle password visibility
+  const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
+  const toggleRePasswordVisibility = () => setShowRePassword((prev) => !prev);
 
   return (
     <main className="bg-black h-screen flex items-center justify-center p-10">
@@ -181,24 +147,50 @@ export default function Home() {
             />
 
             <Label htmlFor="password">Password*</Label>
-            <Input
-              className="mt-1 mb-2 bg-transparent rounded-full"
-              type="password"
-              id="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-            />
+            <div className="relative">
+              <Input
+                className="mt-1 mb-2 bg-transparent rounded-full pr-10"
+                type={showPassword ? 'text' : 'password'}
+                id="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
+              />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute top-1/2 right-3 transform -translate-y-1/2"
+              >
+                {showPassword ? (
+                  <AiFillEyeInvisible size={20} className="text-gray-500" />
+                ) : (
+                  <AiFillEye size={20} className="text-gray-500" />
+                )}
+              </button>
+            </div>
 
             <Label htmlFor="repassword">Re-enter Password*</Label>
-            <Input
-              className="mt-1 mb-2 bg-transparent rounded-full"
-              type="password"
-              id="repassword"
-              placeholder="Re-enter password"
-              value={formData.repassword}
-              onChange={handleChange}
-            />
+            <div className="relative">
+              <Input
+                className="mt-1 mb-2 bg-transparent rounded-full pr-10"
+                type={showRePassword ? 'text' : 'password'}
+                id="repassword"
+                placeholder="Re-enter password"
+                value={formData.repassword}
+                onChange={handleChange}
+              />
+              <button
+                type="button"
+                onClick={toggleRePasswordVisibility}
+                className="absolute top-1/2 right-3 transform -translate-y-1/2"
+              >
+                {showRePassword ? (
+                  <AiFillEyeInvisible size={20} className="text-gray-500" />
+                ) : (
+                  <AiFillEye size={20} className="text-gray-500" />
+                )}
+              </button>
+            </div>
 
             <Button
               type="submit"
