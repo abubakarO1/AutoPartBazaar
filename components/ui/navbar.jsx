@@ -13,7 +13,6 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import { ShoppingCartIcon, Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import Link from "next/link";
-import CartDrawer from "./cartdrawer";
 
 const navigation = [
   { name: "Home", href: "/pages/home" },

@@ -28,13 +28,20 @@ export default function NewPasswordPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check if passwords match
+    // **Step 1**: Check if passwords match
     if (newPassword !== confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
 
-    // Password length validation
+    // **Step 2**: Password strength validation (must have at least one uppercase, one number, and one special character)
+    const passwordStrengthRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
+    if (!passwordStrengthRegex.test(newPassword)) {
+      setError("Password must contain at least one uppercase letter, one number, and one special character.");
+      return;
+    }
+
+    // **Step 3**: Password length validation (at least 8 characters)
     if (newPassword.length < 8) {
       setError("Password should be at least 8 characters long.");
       return;
@@ -50,7 +57,7 @@ export default function NewPasswordPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email,newPassword, confirmPassword }),
+        body: JSON.stringify({ email, newPassword, confirmPassword }),
       });
 
       const data = await response.json();

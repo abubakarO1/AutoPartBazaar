@@ -1,4 +1,4 @@
-import dbConnect from '@/utils/db'; // Correct path to dbConnect utility
+import dbConnect from '@/utils/db';
 import Product from "@/app/models/product";
 import { NextResponse } from "next/server";
 

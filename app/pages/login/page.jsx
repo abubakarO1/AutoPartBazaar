@@ -1,41 +1,55 @@
 'use client';
 
 import { useState } from 'react';
-import  {useRouter}  from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { FcGoogle } from 'react-icons/fc';
+import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai'; // Eye icon imports
 import Image from 'next/image';
+
+export default function Home() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // Manage password visibility
   
-  export default function Home() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-  
-    const router = useRouter();
-  
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-  
-      try {
-        const res = await signIn("credentials", {
-          email,
-          password,
-          redirect: false,
-        });
-  
-        if (res.error) {
-          setError("Invalid Credentials");
-          return;
-        }
-  
-        router.replace("/pages/home");
-      } catch (error) {
-        console.log(error);
+  const router = useRouter();
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (email === 'AutoPartBazaar21@gmail.com') {
+      // Redirect to the special login page
+      router.push('/pages/admindashboard');
+      return;
+    }
+
+    try {
+      const res = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (res.error) {
+        setError("Invalid Credentials");
+        return;
       }
-    };
+
+      router.replace("/pages/home");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Toggle the password visibility
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev); // Toggle the state value
+  };
 
   return (
     <main className="bg-black h-screen flex items-center justify-center p-10">
@@ -59,15 +73,28 @@ import Image from 'next/image';
               required
             />
             <Label htmlFor="password">Password*</Label>
-            <Input
-              className="mt-2 bg-transparent rounded-full"
-              type="password"
-              id="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div className="relative">
+              <Input
+                className="mt-2 mb-4 bg-transparent rounded-full pr-10" // Add padding to the right for the icon
+                type={showPassword ? 'text' : 'password'} // Conditionally change the type based on visibility state
+                id="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility} // Toggle visibility on button click
+                className="absolute top-1/2 right-3 transform -translate-y-1/2" // Position the eye icon inside the input field
+              >
+                {showPassword ? (
+                  <AiFillEyeInvisible size={20} className="text-gray-500" />
+                ) : (
+                  <AiFillEye size={20} className="text-gray-500" />
+                )}
+              </button>
+            </div>
 
             {error && <p className="mt-2 text-red-500 text-sm">{error}</p>}
 

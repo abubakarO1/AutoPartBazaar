@@ -8,8 +8,19 @@ const UpdateProductPage = () => {
   const [loading, setLoading] = useState(false);
   const [customAlert, setCustomAlert] = useState(null); // State for custom alert
 
+  // Validate productId (must be an integer greater than 0)
+  const isValidProductId = (id) => {
+    const numId = parseInt(id, 10);
+    return Number.isInteger(numId) && numId > 0;
+  };
+
   // Fetch product by productId
   const handleFetchProduct = async () => {
+    if (!isValidProductId(productId)) {
+      showCustomAlert("Product ID must be a positive integer greater than 0.", "error");
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await fetch(`/api/products/${productId}`);
@@ -38,6 +49,12 @@ const UpdateProductPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!productId || !isValidProductId(productId)) {
+      showCustomAlert("Product ID must be a positive integer greater than 0.", "error");
+      return;
+    }
+
     if (!product) {
       showCustomAlert("No product data to update. Please fetch the product first.", "error");
       return;
