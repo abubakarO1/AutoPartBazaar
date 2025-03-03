@@ -1,28 +1,62 @@
-import dbConnect from '@/utils/db'; // Path to your DB connection utility
-import Product from "@/app/models/product";
-import { NextResponse } from "next/server";
 
-// GET method to fetch product by productId
-export const GET = async (req, { params }) => {
+// import mongoose from "mongoose";
+// import { NextResponse } from "next/server";
+// import dbConnect from "@/utils/db";
+// import Product from "@/app/models/product";
+
+
+// export async function GET(req, { params }) {
+//   try {
+//     await dbConnect();
+//     const { productId } = params;
+
+//     if (!productId) {
+//       return NextResponse.json({ error: "Product ID is required" }, { status: 400 });
+//     }
+
+//     // Find by productId stored as a string
+//     const product = await Product.findOne({ productId: productId });
+
+//     console.log("Product Query Result:", product); // Debugging
+
+//     if (!product) {
+//       return NextResponse.json({ error: "Product not found" }, { status: 404 });
+//     }
+
+//     return NextResponse.json(product, { status: 200 });
+//   } catch (error) {
+//     console.error("Error fetching product:", error);
+//     return NextResponse.json({ error: "Server error" }, { status: 500 });
+//   }
+// }
+import { NextResponse } from "next/server";
+import dbConnect from "@/utils/db";
+import Product from "@/app/models/product";
+
+export async function GET(req) {
   try {
-    // Ensure database connection
     await dbConnect();
 
-    // Extract productId from dynamic params
-    const { productId } = params;  // Use productId, not productID
-    console.log("Fetching product with ID:", productId); 
+    // Extract productId from URL
+    const urlParts = req.nextUrl.pathname.split("/");
+    const productId = urlParts[urlParts.length - 1]; // Get last part of URL as productId
 
-    // Query the product by productId in the database
+    if (!productId) {
+      return NextResponse.json({ error: "Product ID is required" }, { status: 400 });
+    }
+
+    // Find product in database
     const product = await Product.findOne({ productId });
 
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    // Return product if found
-    return NextResponse.json({ product }, { status: 200 });
+    console.log("Product Query Result:", product); // Debugging
+
+    return NextResponse.json(product, { status: 200 });
   } catch (error) {
     console.error("Error fetching product:", error);
-    return NextResponse.json({ error: "An error occurred while fetching the product" }, { status: 500 });
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
-};
+}

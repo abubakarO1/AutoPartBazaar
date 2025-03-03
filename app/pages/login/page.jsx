@@ -104,14 +104,6 @@ export default function Home() {
             >
               Login
             </Button>
-            <Button
-              className="flex items-center w-full gap-4 px-12 mb-4 bg-transparent rounded-full mt-5"
-              variant="outline"
-              onClick={() => signIn('google')}
-            >
-              <FcGoogle size="25" />
-              Sign In With Google
-            </Button>
           </form>
           <p className="text-xs text-slate-200">
             Don't have an account?{' '}
