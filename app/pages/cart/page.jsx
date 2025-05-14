@@ -272,11 +272,11 @@
 import { useCart } from "@/app/context/CartContext";
 import Navbar from "@/components/ui/navbar";
 import Footer from "@/components/ui/footer";
+import { useRouter } from "next/navigation"; // Import Next.js router
 
 export default function ShoppingCart() {
   const { cart, updateQuantity, removeFromCart } = useCart();
-
-  console.log(cart); // Debugging: Check if image URLs exist
+  const router = useRouter(); // Initialize router
 
   return (
     <>
@@ -301,7 +301,7 @@ export default function ShoppingCart() {
                   >
                     <div className="flex items-center">
                       <img
-                        src={item.imageUrl ? item.imageUrl : "/placeholder.png"} // Fix missing images
+                        src={item.imageUrl ? item.imageUrl : "/placeholder.png"} 
                         alt={item.name}
                         className="w-16 h-16 rounded-lg object-cover"
                       />
@@ -359,9 +359,15 @@ export default function ShoppingCart() {
                   {cart.reduce((total, item) => total + item.price * item.quantity, 250)}
                 </p>
               </div>
-              <button className="w-full mt-6 bg-red-600 text-white p-3 rounded-lg hover:bg-red-700">
+
+              {/* 🔹 Updated Checkout Button to Navigate to Checkout Page */}
+              <button
+                className="w-full mt-6 bg-red-600 text-white p-3 rounded-lg hover:bg-red-700"
+                onClick={() => router.push("/pages/checkout")} // Navigate to Checkout Page
+              >
                 Checkout
               </button>
+
             </div>
           </div>
         </div>
@@ -370,3 +376,102 @@ export default function ShoppingCart() {
     </>
   );
 }
+
+
+// export default function ShoppingCart() {
+//   const { cart, updateQuantity, removeFromCart } = useCart();
+
+//   console.log(cart); // Debugging: Check if image URLs exist
+
+//   return (
+//     <>
+//       <Navbar />
+//       <section className="h-full py-10" style={{ backgroundColor: "#0a0a0a" }}>
+//         <div className="container mx-auto">
+//           <div className="flex justify-center items-start gap-6">
+//             {/* Cart Items */}
+//             <div className="w-full lg:w-7/12">
+//               <h2 className="text-2xl font-semibold text-white">Shopping Cart</h2>
+//               <p className="text-sm text-gray-400">
+//                 You have {cart.length} items in your cart.
+//               </p>
+
+//               {cart.length === 0 ? (
+//                 <p className="text-white mt-4">Your cart is empty.</p>
+//               ) : (
+//                 cart.map((item) => (
+//                   <div
+//                     key={item.id}
+//                     className="bg-gray-900 rounded-lg shadow-md mb-6 p-4 flex justify-between items-center"
+//                   >
+//                     <div className="flex items-center">
+//                       <img
+//                         src={item.imageUrl ? item.imageUrl : "/placeholder.png"} // Fix missing images
+//                         alt={item.name}
+//                         className="w-16 h-16 rounded-lg object-cover"
+//                       />
+//                       <div className="ml-4">
+//                         <h5 className="text-lg font-semibold text-white">{item.name}</h5>
+//                         <p className="text-sm text-gray-400">{item.description}</p>
+//                       </div>
+//                     </div>
+//                     <div className="flex items-center">
+//                       <input
+//                         type="number"
+//                         min="1"
+//                         value={item.quantity}
+//                         className="w-12 border border-gray-600 rounded-lg text-center mr-4 bg-gray-700 text-white"
+//                         onChange={(e) =>
+//                           updateQuantity(item.id, parseInt(e.target.value, 10) || 1)
+//                         }
+//                       />
+//                       <p className="text-lg font-semibold text-white mr-4">
+//                         Rs {item.price * item.quantity}
+//                       </p>
+//                       <button
+//                         className="text-gray-400 hover:text-red-600"
+//                         onClick={() => removeFromCart(item.id)}
+//                       >
+//                         🗑️ {/* Remove Item */}
+//                       </button>
+//                     </div>
+//                   </div>
+//                 ))
+//               )}
+
+//               <h5 className="text-lg mb-4">
+//                 <a href="/pages/productlist" className="text-red-600 hover:underline">
+//                   ← Continue Shopping
+//                 </a>
+//               </h5>
+//             </div>
+
+//             {/* Payment Summary */}
+//             <div className="w-full lg:w-5/12 bg-gray-900 text-white rounded-lg p-6 shadow-md">
+//               <h5 className="text-lg font-semibold mb-4">Payment Summary</h5>
+//               <div className="flex justify-between items-center mb-4">
+//                 <p className="text-sm text-gray-400">Subtotal</p>
+//                 <p>Rs {cart.reduce((total, item) => total + item.price * item.quantity, 0)}</p>
+//               </div>
+//               <div className="flex justify-between items-center mb-4">
+//                 <p className="text-sm text-gray-400">Shipping</p>
+//                 <p>Rs 250</p>
+//               </div>
+//               <div className="flex justify-between items-center text-lg font-semibold">
+//                 <p>Total</p>
+//                 <p>
+//                   Rs{" "}
+//                   {cart.reduce((total, item) => total + item.price * item.quantity, 250)}
+//                 </p>
+//               </div>
+//               <button className="w-full mt-6 bg-red-600 text-white p-3 rounded-lg hover:bg-red-700">
+//                 Checkout
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       </section>
+//       <Footer />
+//     </>
+//   );
+// }

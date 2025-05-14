@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import * as THREE from 'three';
-import { useSearchParams } from "next/navigation";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Navbar from '@/components/ui/navbar';
@@ -15,9 +14,6 @@ export default function Garage() {
   const [selectedBumperType, setSelectedBumperType] = useState(null);
   const [carModel, setCarModel] = useState(null);
   const [selectedColorName, setSelectedColorName] = useState('');
-
-  const searchParams = useSearchParams();
-  const modelUrl = searchParams.get("modelUrl");
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -37,13 +33,7 @@ export default function Garage() {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
       
         return canvas;
-      } 
-
-    if (!modelUrl) {
-            console.error("❌ No model URL found in the query params.");
-             return;
-           }
-           console.log("✅ Model URL:", modelUrl);
+      }                
       let car;
       const scene = new THREE.Scene();
       const gradientTexture = new THREE.CanvasTexture(createGradientCanvas());
@@ -61,7 +51,7 @@ export default function Garage() {
         container.appendChild(renderer.domElement);
       }
 
-      // Brighter ambient light
+// Brighter ambient light
 const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
 scene.add(ambientLight);
 
@@ -77,26 +67,24 @@ backLight.position.set(-5, 5, -5);
 scene.add(backLight);
 
 const loader = new GLTFLoader();
-    loader.load(
-      decodeURIComponent(modelUrl), 
-        (gltf) => {
-          car = gltf.scene;
-          car.scale.set(4.5, 4.5, 4.5);
-          car.position.set(0, -0.7, 0);
-          
-          // Apply a slight color tint to only the car body, preserving textures
-          car.traverse((child) => {
-            if (child.isMesh && child.name.toLowerCase().includes('body')) { 
-              // Create a new material based on the existing one
-              const originalMaterial = child.material;
-              child.material = new THREE.MeshStandardMaterial({
-                map: originalMaterial.map, // Keep original texture
-                roughness: originalMaterial.roughness,
-                metalness: originalMaterial.metalness,
-                color: new THREE.Color('#ffffff').lerp(new THREE.Color('#FF0000'), 0)
-              });
-            }
-          });
+
+loader.load(
+  '/CarModels/bmw.glb',
+  (gltf) => {
+    car = gltf.scene;
+    car.scale.set(0.6, 0.6, 0.6);
+    car.position.set(0, -0.3, 0);
+    car.rotation.y = Math.PI; // <<< Rotate car to face the camera
+
+    car.traverse((child) => {
+      if (child.isMesh && child.material) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+
+        // Optional: log mesh names
+        // console.log('Mesh:', child.name);
+      }
+    });                          
       
           scene.add(car);
           setCarModel(car);
@@ -132,19 +120,19 @@ controls.maxPolarAngle = Math.PI / 2; // Restrict downward view
         const tireModel = gltf.scene;
 
         // Default scale and positions for generic tires
-        let scale = { x: 0.31, y: 0.31, z: 0.31 };
+        let scale = { x: 1.9, y: 1.9, z: 1.9};
         let wheelPositions = [
-            { x: 0.35, y: 0.142, z: 0.57 },  // Front Right
-            { x: 0.35, y: 0.142, z: -0.55 }, // Rear Right
+            { x: 2.2, y: 0.9, z: 2.5 },  // Front Right
+            { x: 2.2, y: 0.9, z: -5 }, // Rear Right
         ];
         let customRotation = { x: 0, y: Math.PI / 2, z: 0 }; // Default rotation (Y-axis)
 
         // Adjust for tire1.glb
         if (tireModelPath.includes("tire1.glb")) {
-            scale = { x: 0.23, y: 0.23, z: 0.23 }; // Slightly larger tires
+            scale = { x: 1.6, y: 1.6, z: 1.6 }; // Slightly larger tires
             wheelPositions = [
-                { x: 0.36, y: 0.15, z: 0.58 },  // Adjusted Front Right
-                { x: 0.36, y: 0.15, z: -0.56 }, // Adjusted Rear Right
+              { x: 2.4, y: 0.85, z: 2.5 },  // Front Right
+              { x: 2.4, y: 0.85, z: -4.95 }, // Rear Right
             ];
             customRotation = { x: 0, y: Math.PI, z: 0 }; // Rotate **90° on Y-axis**
         }
@@ -238,6 +226,51 @@ const loadXenonLights = (modelPath) => {
   });
 };
 
+const loadBackLights = (modelPath) => {
+  if (!carModel || !modelPath) return;
+
+  const loader = new GLTFLoader();
+  loader.load(modelPath, (gltf) => {
+    // Remove old custom lights first
+    carModel.children = carModel.children.filter(child => 
+      !child.name.includes("back_light")
+    );
+
+    // Create right light
+    const rightLight = gltf.scene;
+    rightLight.scale.set(0.25, 0.25, 0.25); // Increased scale for better visibility
+    rightLight.position.set(0.45, 0.3, -0.78); // Adjusted X position to align with car body
+    rightLight.rotation.set(0, Math.PI, 0);
+    rightLight.name = "back_light_right";
+    
+    // Create left light (clone and mirror)
+    const leftLight = rightLight.clone();
+    leftLight.position.set(-0.35, 0.36, -0.85); // Mirror position on X axis
+    leftLight.name = "back_light_left";
+    
+    // Add both lights to car model
+    carModel.add(rightLight);
+    carModel.add(leftLight);
+    
+    // Enhance visibility with emissive materials
+    [rightLight, leftLight].forEach(light => {
+      light.traverse((child) => {
+        if (child.isMesh) {
+          if (child.material) {
+            // Clone the material to avoid affecting other objects
+            child.material = child.material.clone();
+            
+            // Add emissive properties to make lights glow
+            if (child.name.includes("glass") || child.name.includes("lens")) {
+              child.material.emissive = new THREE.Color(0xff0000);
+              child.material.emissiveIntensity = 0.8;
+            }
+          }
+        }
+      });
+    });
+  });
+};
 
   const colorNames = {
     '#FF0000': 'Rallye Red',
@@ -255,28 +288,37 @@ const loadXenonLights = (modelPath) => {
     setSelectedColorName(colorNames[color]);
 
     if (carModel) {
-        carModel.traverse((child) => {
-            if (child.isMesh && child.name) { 
-                const bodyParts = [
-                    "hood", "roof", "door", "trunk", "fender", "frontfender", "rearquarterpanel",
-                    "quarterpanel", "pillar", "body",
-                ];
-                const blackParts = [
-                    "grill", "splitter", "diffuser", "spoiler", "mirror", "vent"
-                ];
-
-                const partName = child.name.toLowerCase();
-                const isBodyPart = bodyParts.some(part => partName.includes(part));
-                const isBlackPart = blackParts.some(part => partName.includes(part));
-
-                if (isBodyPart) {
-                    child.material.color.set(new THREE.Color(color)); // Apply selected color
-                } else if (isBlackPart) {
-                    child.material.color.set(new THREE.Color(0x000000)); // Keep black parts black
-                }
-            }
-        });
-    }
+      carModel.traverse((child) => {
+          if (child.isMesh && child.name) {
+            const bodyParts = [
+              "hood", "door", "trumk", "fender", "frontfender", "rear", "rearpanel",
+              "rearquarter", "quarterpanel", "quarter", "pillar", "sidepanel", "side",
+              "apron", "panel", "shell", "chassis", "skirt", "cabin", "frame", "bumper","body"
+            ];                   
+  
+              const blackParts = [
+                  "grill", "splitter", "diffuser", "spoiler", "mirror", "vent", "lip", "wing", "scoop",,"front"
+              ];
+  
+              const partName = child.name.toLowerCase();
+              const isBodyPart = bodyParts.some(part => partName.includes(part));
+              const isBlackPart = blackParts.some(part => partName.includes(part));
+  
+              // Debug: See what's getting matched
+              // console.log(child.name, '->', isBodyPart ? 'body' : isBlackPart ? 'black' : 'other');
+  
+              if (isBodyPart) {
+                  child.material = child.material.clone(); // Important: avoid sharing materials
+                  child.material.color.set(new THREE.Color(color)); // Set selected color
+                  child.material.needsUpdate = true;
+              } else if (isBlackPart) {
+                  child.material = child.material.clone();
+                  child.material.color.set(new THREE.Color(0x000000)); // Black for accents
+                  child.material.needsUpdate = true;
+              }
+          }
+      });
+  }  
 };
 
   
@@ -298,9 +340,9 @@ const loadXenonLights = (modelPath) => {
       { name: 'Xenon Lights', price: 1350, img: '/svgs/light.svg', model: '/models/civicrightlight.glb' },
       { name: 'Black Sports Lights', price: 1350, img: '/svgs/light.svg', model: '/models/civiclight.glb' }
     ],
-    // rearLights: [
-    //   { name: 'Strip Lights', price: 1350, img: '/svgs/light.svg', model: '/models/backlight.glb' },
-    // ]
+    rearLights: [
+      { name: 'Strip Lights', price: 1350, img: '/svgs/light.svg', model: '/models/backlight.glb' },
+    ]
   };
   
 
@@ -355,7 +397,7 @@ const loadXenonLights = (modelPath) => {
 
         {/* Customization Panel */}
         <div className="relative w-1/3 bg-gray-900 shadow-lg rounded-lg p-6 border border-gray-700">
-          <h2 className="text-xl font-bold text-white mb-4">Honda Civic 2023</h2>
+          <h2 className="text-xl font-bold text-white mb-4">BMW E46 Msport 2021</h2>
           <h3 className="text-md font-semibold text-red-500">Customization Options</h3>
 
           {/* Color Options */}
@@ -430,7 +472,7 @@ const loadXenonLights = (modelPath) => {
     >
       Start Engine
     </button>
-    <audio id="engine-audio" src="/civicstart.mp3" preload="auto" />
+    <audio id="engine-audio" src="/bmwstart.mp3" preload="auto" />
   </div>
 
   {/* Rev Engine Button */}
@@ -458,7 +500,7 @@ const loadXenonLights = (modelPath) => {
     >
       Rev Engine
     </button>
-    <audio id="rev-audio" src="/civicrev.mp3" preload="auto" />
+    <audio id="rev-audio" src="/bmwrev.mp3" preload="auto" />
   </div>
 </div>
         </div>

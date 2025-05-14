@@ -5,7 +5,7 @@ import Navbar from '@/components/ui/navbar';
 import Footer from '@/components/ui/footer';
 import { Parallax } from "react-parallax";
 import { FaStar, FaRegStar } from 'react-icons/fa';
-
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -199,17 +199,19 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-6 flex flex-col items-center md:items-start md:flex-row">
         {/* Text Content */}
         <div className="md:w-1/2 text-center md:text-left">
-          <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-            AUTO PART BAZAAR VISUALIZER
-          </h1>
+        <h1 className="text-4xl md:text-5xl font-bold leading-tight cursor-pointer hover:underline">
+           AUTO PART BAZAAR VISUALIZER
+        </h1>
           <div className="h-1 w-24 bg-red-600 my-4 mx-auto md:mx-0"></div>
           <p className="text-lg text-gray-300 mb-6">
             AutoPartBazaar's Configurator allows you to visualize your car
             with numerous parts and save them.
           </p>
+          <Link href="/viewmodel">
           <button className="bg-red-600 text-white text-lg font-bold px-6 py-3 rounded hover:bg-gray-700 transition-all">
-            VISUALIZER
+           VISUALIZER
           </button>
+          </Link>
         </div>
 
         {/* Images */}
@@ -270,7 +272,7 @@ export default function Home() {
 
     <div className="mt-12">
       <a
-        href="/shop"
+        href="/pages/productlist"
         className="text-lg text-red-600 hover:underline font-semibold"
       >
         Start Shopping Now &rarr;

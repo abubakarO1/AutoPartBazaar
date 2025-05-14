@@ -64,98 +64,85 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {/* Form Section */}
             <div className="md:col-span-2">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="firstName" className="block text-sm font-medium">
-                      First Name
-                    </label>
-                    <input
-                      type="text"
-                      id="firstName"
-                      placeholder="Tahir"
-                      value={formData.firstName}
-                      onChange={handleChange}
-                      className="mt-2 w-full px-4 py-2 rounded bg-gray-900 text-white border border-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
-                  </div>
-                  <div>
-                    <label htmlFor="lastName" className="block text-sm font-medium">
-                      Last Name
-                    </label>
-                    <input
-                      type="text"
-                      id="lastName"
-                      placeholder="Farooq"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                      className="mt-2 w-full px-4 py-2 rounded bg-gray-900 text-white border border-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
-                  </div>
-                </div>
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium">
-                    Your Email
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    placeholder="name@google.com"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="mt-2 w-full px-4 py-2 rounded bg-gray-900 text-white border border-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-                </div>
-                <div>
-                  <label htmlFor="phone" className="block text-sm font-medium">
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    placeholder="+92 3456789"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="mt-2 w-full px-4 py-2 rounded bg-gray-900 text-white border border-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
-                </div>
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium">
-                    Your Message
-                  </label>
-                  <textarea
-                    id="message"
-                    rows="4"
-                    placeholder="Leave a comment..."
-                    value={formData.message}
-                    onChange={handleChange}
-                    className="mt-2 w-full px-4 py-2 rounded bg-gray-900 text-white border border-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  ></textarea>
-                  {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message}</p>}
-                </div>
-                <p className="text-sm text-gray-400">
-                  By submitting this form you agree to our{' '}
-                  <a href="#" className="text-red-500 hover:underline">
-                    terms and conditions
-                  </a>{' '}
-                  and our{' '}
-                  <a href="#" className="text-red-500 hover:underline">
-                    privacy policy
-                  </a>
-                  .
-                </p>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full py-3 px-6 bg-red-600 hover:bg-gray-900 text-white font-bold rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  {isSubmitting ? "Sending..." : "Send Message"}
-                </button>
-              </form>
+            <form
+  action="https://formsubmit.co/muhammad.haaris2000@gmail.com"
+  method="POST"
+  className="space-y-6"
+>
+  {/* Hidden fields for config (optional) */}
+  <input type="hidden" name="_captcha" value="false" />
+  <input type="hidden" name="_next" value="http://localhost:3000/pages/contact" />
+
+
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <label className="block text-sm font-medium">First Name</label>
+      <input
+        type="text"
+        name="firstName"
+        required
+        placeholder="Tahir"
+        className="mt-2 w-full px-4 py-2 rounded bg-gray-900 text-white border border-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+    <div>
+      <label className="block text-sm font-medium">Last Name</label>
+      <input
+        type="text"
+        name="lastName"
+        required
+        placeholder="Farooq"
+        className="mt-2 w-full px-4 py-2 rounded bg-gray-900 text-white border border-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+  </div>
+
+  <div>
+    <label className="block text-sm font-medium">Your Email</label>
+    <input
+      type="email"
+      name="email"
+      required
+      placeholder="name@google.com"
+      className="mt-2 w-full px-4 py-2 rounded bg-gray-900 text-white border border-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+
+  <div>
+    <label className="block text-sm font-medium">Phone Number</label>
+    <input
+      type="tel"
+      name="phone"
+      required
+      placeholder="+92 3456789"
+      className="mt-2 w-full px-4 py-2 rounded bg-gray-900 text-white border border-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+
+  <div>
+    <label className="block text-sm font-medium">Your Message</label>
+    <textarea
+      name="message"
+      rows="4"
+      required
+      placeholder="Leave a comment..."
+      className="mt-2 w-full px-4 py-2 rounded bg-gray-900 text-white border border-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    ></textarea>
+  </div>
+
+  <p className="text-sm text-gray-400">
+    By submitting this form you agree to our{" "}
+    <a href="#" className="text-red-500 hover:underline">terms</a> and{" "}
+    <a href="#" className="text-red-500 hover:underline">privacy policy</a>.
+  </p>
+
+  <button
+    type="submit"
+    className="w-full py-3 px-6 bg-red-600 hover:bg-gray-900 text-white font-bold rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+  >
+    Send Message
+  </button>
+</form>
             </div>
 
             {/* Information Section */}

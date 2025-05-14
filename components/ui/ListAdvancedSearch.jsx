@@ -118,7 +118,7 @@ const AdvancedSearch = ({ filters, setFilters }) => {
           <option value="">All</option>
           <option value="Toyota">Toyota</option>
           <option value="Honda">Honda</option>
-          <option value="Suzuki">Suzuki</option>
+          <option value="BMW">BMW</option>
         </select>
       </div>
 

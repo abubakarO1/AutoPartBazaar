@@ -19,7 +19,7 @@ const navigation = [
   { name: "Products", href: "/pages/productlist" },
   { name: "Contact Us", href: "/pages/contact" },
   { name: "About", href: "/pages/about" },
-  { name: "View Gallery", href: "/pages/viewmodel" },
+  { name: "Build Car", href: "/viewmodel" },
 ];
 
 function classNames(...classes) {
@@ -79,9 +79,9 @@ export default function Navbar() {
                 <ShoppingCartIcon className="h-6 w-6" aria-hidden="true" />
               </button>
               </Link>
-              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-xs text-white">
+              {/* <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-xs text-white">
                 2
-              </span>
+              </span> */}
             </div>
   <div className="flex space-x-4 ml-4">
   {status === "loading" ? (
@@ -100,7 +100,7 @@ export default function Navbar() {
               className="text-gray-300 hover:bg-red-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
             >
               Login
-            </Link>
+            </Link>w
              <Link
                   href="/pages/signup"
                   className="text-gray-300 hover:bg-red-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
